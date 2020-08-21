@@ -69,4 +69,4 @@ class OnReady(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Listeners(bot))
+    bot.add_cog(OnReady(bot))
