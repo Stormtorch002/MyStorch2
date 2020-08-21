@@ -5,7 +5,12 @@ bot = commands.Bot(command_prefix=commands.when_mentioned_or('ms '))
 bot.muted_role_id = 645655653527846942
 bot.guild_id = 641379116007817216
 
-for cog in ['on_ready', 'moderation']:
+for cog in (
+        'on_ready',
+        'moderation',
+        'counting',
+        'one_word_sentence'
+):
     bot.load_extension('cogs.' + cog)
 
 bot.run(TOKEN)
