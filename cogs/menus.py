@@ -9,10 +9,11 @@ def create_embed(bot, queried_rows, page):
 
     guild = bot.get_guild(bot.guild_id)
     desc = '```ID: {}\nUSER: {}\nMOD: {}\nREASON: {}\nTIME: {}```'
-    desc = '\n\n'.join([desc.format(warn[0], guild.get_member(warn[1]), guild.get_member(warn[2]),
+    desc = '\n'.join([desc.format(warn[0], guild.get_member(warn[1]), guild.get_member(warn[2]),
                                     warn[3], datetime.fromtimestamp(warn[4]).strftime("%m/%d/%Y at %I:%M:%S %p EST"))
                         for warn in chunk])
     embed = discord.Embed(color=discord.Colour.blue())
+    embed.title = f'{len(queried_rows)} Warnings'
     embed.description = desc
     embed.set_author(name=f'Page {page}/{len(queried_rows)}')
     return embed

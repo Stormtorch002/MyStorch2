@@ -9,7 +9,8 @@ for cog in (
         'on_ready',
         'moderation',
         'counting',
-        'one_word_sentence'
+        'one_word_sentence',
+        'gd'
 ):
     bot.load_extension('cogs.' + cog)
 

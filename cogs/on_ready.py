@@ -1,6 +1,7 @@
 from discord.ext import commands, tasks
 import discord
 import aiosqlite3
+import aiohttp
 import time
 
 
@@ -12,25 +13,33 @@ class OnReady(commands.Cog):
     @tasks.loop(seconds=4.20)
     async def loop(self):
 
-        async with self.bot.db.cursor() as cur:
-            query = 'SELECT user_id FROM muted WHERE muted_until < ?'
-            await cur.execute(query, (time.time(),))
-            muted_ids = await cur.fetchall()
-            query = 'SELECT user_id FROM tempbanned WHERE banned_until < ?'
-            await cur.execute(query, (time.time(),))
-            banned_ids = await cur.fetchall()
+        try:
+            async with self.bot.db.cursor() as cur:
+                query = 'SELECT user_id FROM muted WHERE muted_until < ?'
+                await cur.execute(query, (time.time(),))
+                muted_ids = await cur.fetchall()
+                query = 'SELECT user_id FROM tempbanned WHERE banned_until < ?'
+                await cur.execute(query, (time.time(),))
+                banned_ids = await cur.fetchall()
+                query = 'DELETE FROM muted WHERE muted_until < ?'
+                await cur.execute(query, (time.time(),))
+                query = 'DELETE FROM tempbanned WHERE banned_until < ?'
+                await cur.execute(query, (time.time(),))
 
-        if muted_ids:
-            guild = self.bot.get_guild(self.bot.guild_id)
-            role = guild.get_role(self.bot.muted_role_id)
-            for muted_id in muted_ids:
-                member = guild.get_member(muted_id)
-                await member.remove_roles(role)
-        if banned_ids:
-            guild = self.bot.get_guild(self.bot.guild_id)
-            for banned_id in banned_ids:
-                user = await self.bot.fetch_user(banned_id)
-                await guild.unban(user)
+            if muted_ids:
+                guild = self.bot.get_guild(self.bot.guild_id)
+                role = guild.get_role(self.bot.muted_role_id)
+                for muted_id in muted_ids:
+                    member = guild.get_member(muted_id[0])
+                    await member.remove_roles(role)
+            if banned_ids:
+                guild = self.bot.get_guild(self.bot.guild_id)
+                for banned_id in banned_ids:
+                    user = await self.bot.fetch_user(banned_id[0])
+                    await guild.unban(user)
+
+        except Exception as e:
+            print(e)
 
     @commands.Cog.listener()
     async def on_ready(self):

@@ -29,7 +29,7 @@ class Counting(commands.Cog):
                 self.data['next'] += 1
 
                 with open('./cogs/counting.json', 'w') as f:
-                    json.dump(self.data, f)
+                    json.dump(self.data, f, indent=2)
 
     @commands.Cog.listener()
     async def on_raw_message_edit(self, payload):

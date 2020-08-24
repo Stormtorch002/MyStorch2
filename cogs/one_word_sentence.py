@@ -24,7 +24,7 @@ class OneWordSentence(commands.Cog):
                 self.last_author_id = self.data['last_author_id'] = str(message.author.id)
 
                 with open('./cogs/one_word_sentence.json', 'w') as f:
-                    json.dump(self.data, f)
+                    json.dump(self.data, f, indent=2)
 
 
 def setup(bot):
