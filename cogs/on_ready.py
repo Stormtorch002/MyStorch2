@@ -78,6 +78,14 @@ class OnReady(commands.Cog):
                 "xp" INTEGER,
                 "color" TEXT,
                 "url" TEXT
+            )''',
+            '''CREATE TABLE IF NOT EXISTS tags (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "name" TEXT,
+                "response" TEXT,
+                "uses" TEXT,
+                "creator_id" INTEGER,
+                "created_at" INTEGER
             )'''
         ]
         async with db.cursor() as cur:
@@ -95,6 +103,9 @@ class OnReady(commands.Cog):
 
             for row in rows:
                 self.bot.leveling[row[0]] = row[1]
+
+            await cur.execute('SELECT name FROM tags')
+            self.bot.tag_names = [x[0] for x in await cur.fetchall()]
 
         activity = discord.Activity(type=discord.ActivityType.watching, name="PMP's Grave")
         await self.bot.change_presence(activity=activity)
