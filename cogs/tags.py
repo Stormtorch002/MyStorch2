@@ -79,6 +79,10 @@ class Tags(commands.Cog):
         self.bot.tag_names.remove(name)
         await ctx.send(f'Delete tag `{name}`.')
 
+    @tag.command()
+    async def all(self, ctx):
+        await ctx.send(' '.join([f'`{name}`' for name in self.bot.tag_names]))
+
 
 def setup(bot):
     bot.add_cog(Tags(bot))
