@@ -179,7 +179,7 @@ class Moderation(commands.Cog):
         embed.set_author(name=f'Warning Issued', icon_url=self.avatar(member))
         await ctx.send(embed=embed)
 
-    @warn.group(aliases=['del', 'remove', 'delete'])
+    @warn.group(invoke_without_command=True, aliases=['del', 'remove', 'delete'])
     @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
     async def clear(self, ctx, warning_ids: commands.Greedy[int]):
 
