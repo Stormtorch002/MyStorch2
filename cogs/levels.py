@@ -197,16 +197,14 @@ class Levels(commands.Cog):
             font = ImageFont.truetype('./cogs/fonts/mono.ttf', 38)
             size = font.getsize(str(current_level))[0]
             x = 330 - size
-            bordered_text(draw=draw, xy=(x, 170), font=font, fill=(0, 0, 0, 255), thiccness=1, text=str(current_level),
-                          outline=(255, 255, 255, 255))
-            bordered_text(draw=draw, xy=(745, 170), font=font, fill=(0, 0, 0, 255), thiccness=1,
-                          text=str(current_level + 1), outline=(255, 255, 255, 255))
+            draw.text(xy=(x, 170), font=font, fill=(255, 255, 255, 255), text=str(current_level))
+            draw.text(xy=(745, 170), font=font, fill=(255, 255, 255, 255), text=str(current_level + 1))
             font = ImageFont.truetype('./cogs/fonts/ubuntu.ttf', 38)
             bordered_text(draw=draw, font=font, xy=(300, 110), text=f'Rank: ', fill=(255, 255, 255, 255),
                           outline=(0, 0, 0, 255), thiccness=2)
             textlen = font.getsize("Rank: ")[0]
-            font = ImageFont.truetype('./cogs/fonts/ubuntu.ttf', 48)
-            bordered_text(xy=(410, 104), draw=draw, text=str(rank), font=font, fill=color, thiccness=2,
+            font = ImageFont.truetype('./cogs/fonts/mono.ttf', 48)
+            bordered_text(xy=(410, 107), draw=draw, text=str(rank), font=font, fill=color, thiccness=2,
                           outline=(0, 0, 0, 255))
             ranklen = font.getsize(str(rank))[0]
             totallen = textlen + ranklen + 315
@@ -255,7 +253,7 @@ class Levels(commands.Cog):
             if nlr:
                 role_color = nlr.color.to_rgb()
                 color_tuple = (role_color[0], role_color[1], role_color[2], 255)
-                role_name = nlr.name
+                role_name = nlr.name.split(' | ')[0]
                 levels_to = nl - current_level
 
                 if levels_to == 1:
