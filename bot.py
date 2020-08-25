@@ -12,7 +12,6 @@ for cog in (
     'one_word_sentence',
     'gd',
     'suggestions',
-    'levels',
     'tags'
 ):
     bot.load_extension('cogs.' + cog)
