@@ -272,6 +272,12 @@ class Moderation(commands.Cog):
     async def purge(self, ctx, amount: int):
         await ctx.channel.purge(limit=amount + 1)
 
+    @commands.command()
+    @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
+    async def slowmode(self, ctx, channel: discord.TextChannel, delay: float):
+        await channel.edit(slowmode_delay=delay)
+        await ctx.send('Done')
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
