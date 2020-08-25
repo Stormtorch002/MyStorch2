@@ -1,0 +1,9 @@
+config.py
+main.db
+__pycache__/
+cogs/__pycache__/
+.idea/
+cogs/counting.json
+cogs/fonts/
+cogs/images/
+cogs/one_word_sentence.json
