@@ -8,6 +8,7 @@ import time
 class OnReady(commands.Cog):
 
     def __init__(self, bot):
+        self.leveling = {}
         self.bot = bot
 
     @tasks.loop(seconds=4.20)
@@ -65,13 +66,35 @@ class OnReady(commands.Cog):
                 "banned_at" INTEGER,
                 "banned_until" INTEGER,
                 "reason" TEXT
+            )''',
+            '''CREATE TABLE IF NOT EXISTS suggestion_cooldowns (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "user_id" INTEGER,
+                "reset_time" INTEGER
+            )''',
+            '''CREATE TABLE IF NOT EXISTS leveling (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "user_id" INTEGER,
+                "xp" INTEGER,
+                "color" TEXT,
+                "url" TEXT
             )'''
         ]
         async with db.cursor() as cur:
             for query in queries:
                 await cur.execute(query)
-        self.bot.db = db
-        self.loop.start()
+
+            self.bot.db = db
+            self.loop.start()
+
+            query = 'SELECT user_id, xp FROM leveling'
+            await cur.execute(query)
+            rows = await cur.fetchall()
+
+            self.bot.leveling = self.leveling
+
+            for row in rows:
+                self.bot.leveling[row[0]] = row[1]
 
         activity = discord.Activity(type=discord.ActivityType.watching, name="PMP's Grave")
         await self.bot.change_presence(activity=activity)

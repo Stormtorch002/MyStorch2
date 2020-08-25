@@ -6,10 +6,6 @@ from cogs import menus
 from datetime import datetime
 
 
-def is_staff(ctx):
-    return 692910121776447528 in [role.id for role in ctx.author.roles]
-
-
 def humanize(seconds: int):
     times = []
     y = seconds // 31536000
@@ -137,7 +133,7 @@ class Moderation(commands.Cog):
                     await message.author.ban(reason='n word')
 
     @commands.command()
-    @commands.check(is_staff)
+    @commands.has_any_role(725117477578866798, 725117459803275306, 725117475368206377, 725117475997483126)
     async def warn(self, ctx, member: discord.Member, *, reason):
         muted_role = self.bot.get_guild(self.bot.guild_id).get_role(self.bot.muted_role_id)
 
@@ -183,7 +179,7 @@ class Moderation(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.check(is_staff)
+    @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
     async def clearwarn(self, ctx, warning_ids: commands.Greedy[int]):
 
         async with self.bot.db.cursor() as cur:
@@ -195,7 +191,7 @@ class Moderation(commands.Cog):
         await ctx.send(f'Cleared warnings.')
 
     @commands.group(invoke_without_command=True)
-    @commands.check(is_staff)
+    @commands.has_any_role(725117477578866798, 725117459803275306, 725117475368206377, 725117475997483126)
     async def warnings(self, ctx):
 
         async with self.bot.db.cursor() as cur:
@@ -209,7 +205,7 @@ class Moderation(commands.Cog):
         await menus.WarningsMenu().start(ctx)
 
     @warnings.command(name='for')
-    @commands.check(is_staff)
+    @commands.has_any_role(725117477578866798, 725117459803275306, 725117475368206377, 725117475997483126)
     async def _for(self, ctx, *, member: discord.Member):
 
         async with self.bot.db.cursor() as cur:
@@ -223,7 +219,7 @@ class Moderation(commands.Cog):
         await menus.WarningsMenu().start(ctx)
 
     @warnings.command()
-    @commands.check(is_staff)
+    @commands.has_any_role(725117477578866798, 725117459803275306, 725117475368206377, 725117475997483126)
     async def done(self, ctx, *, member: discord.Member):
 
         async with self.bot.db.cursor() as cur:
@@ -237,7 +233,7 @@ class Moderation(commands.Cog):
         await menus.WarningsMenu().start(ctx)
 
     @commands.command()
-    @commands.check(is_staff)
+    @commands.has_any_role(725117477578866798, 725117459803275306, 725117475368206377, 725117475997483126)
     async def mute(self, ctx, member: discord.Member, *, time_reason):
 
         if self.bot.muted_role_id in [role.id for role in member.roles]:
@@ -272,7 +268,7 @@ class Moderation(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.check(is_staff)
+    @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
     async def purge(self, ctx, amount: int):
         await ctx.channel.purge(limit=amount + 1)
 

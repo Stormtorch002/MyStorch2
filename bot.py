@@ -10,8 +10,11 @@ for cog in (
         'moderation',
         'counting',
         'one_word_sentence',
-        'gd'
+        'gd',
+        'suggestions',
+        'levels'
 ):
     bot.load_extension('cogs.' + cog)
+bot.load_extension('jishaku')
 
 bot.run(TOKEN)
