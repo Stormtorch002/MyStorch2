@@ -161,12 +161,12 @@ class Levels(commands.Cog):
                 return
 
         def process_image():
-            # opens
+            # open
             template = Image.open('./cogs/images/template.png')
             av = Image.open(BytesIO(avatar_data))
             border = Image.open('./cogs/images/border.png')
-            # resizes
-            border = border.resize(size=(250, 250))
+            # resize
+            border = border.resize(size=(235, 235))
             image = Image.open(BytesIO(image_data))
             size = image.size
             multiplier = 900 / size[0]
@@ -284,7 +284,7 @@ class Levels(commands.Cog):
                 bordered_text(draw=draw, font=font, thiccness=1, text=text, fill=(255, 255, 255, 255),
                               outline=(0, 0, 0, 255), xy=(300 + size, 220))
 
-            template.paste(border, (10, 18), border)
+            template.paste(border, (15, 18), border)
 
             buffer = BytesIO()
             template.save(buffer, 'png')
