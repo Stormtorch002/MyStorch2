@@ -4,6 +4,7 @@ import time
 import parsedatetime
 from cogs import menus
 from datetime import datetime
+from typing import Union
 
 
 def humanize(seconds: int):
@@ -132,7 +133,7 @@ class Moderation(commands.Cog):
                 else:
                     await message.author.ban(reason='n word')
 
-    @commands.command()
+    @commands.group()
     @commands.has_any_role(725117477578866798, 725117459803275306, 725117475368206377, 725117475997483126)
     async def warn(self, ctx, member: discord.Member, *, reason):
         muted_role = self.bot.get_guild(self.bot.guild_id).get_role(self.bot.muted_role_id)
@@ -178,9 +179,9 @@ class Moderation(commands.Cog):
         embed.set_author(name=f'Warning Issued', icon_url=self.avatar(member))
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @warn.group(aliases=['del', 'remove', 'delete'])
     @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
-    async def clearwarn(self, ctx, warning_ids: commands.Greedy[int]):
+    async def clear(self, ctx, warning_ids: commands.Greedy[int]):
 
         async with self.bot.db.cursor() as cur:
             for warning_id in warning_ids:
@@ -189,6 +190,28 @@ class Moderation(commands.Cog):
                 await self.bot.db.commit()
 
         await ctx.send(f'Cleared warnings.')
+
+    @clear.command()
+    @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
+    async def latest(self, ctx):
+        async with self.bot.db.cursor() as cur:
+            query = 'SELECT user_id FROM warnings ORDER BY "id" DESC'
+            await cur.execute(query)
+            user_id = await cur.fetchone()
+
+            if user_id:
+                await ctx.send(f'Cleared warning from `{ctx.guild.get_member(user_id)}`')
+            else:
+                return await ctx.send('No warnings found.')
+
+            query = 'DELETE TOP(1) FROM warnings ORDER BY "id" DESC'
+            await cur.execute(query)
+            await self.bot.db.commit()
+
+    @commands.command()
+    @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
+    async def clearwarn(self, ctx):
+        await ctx.send(f'the command is `warn clear`')
 
     @commands.group(invoke_without_command=True)
     @commands.has_any_role(725117477578866798, 725117459803275306, 725117475368206377, 725117475997483126)
@@ -269,7 +292,43 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
-    async def purge(self, ctx, amount: int):
+    async def ban(self, ctx, member: Union[discord.Member, int], *, time_reason):
+        i = member.id if isinstance(member, discord.Member) else member
+        if i in [entry[1].id for entry in await ctx.guild.bans()]:
+            return await ctx.send(f'`{member}` is already banned.')
+
+        parsed = self.parser.parse(time_reason)[0]
+
+        ban_time = int(time.mktime(parsed))
+        ban_length = ban_time - int(time.time())
+        reason = ' '.join([word for word in time_reason.split() if not (word[0].isdigit() and not word[1].isdigit())])
+
+        if isinstance(member, discord.Member):
+            await member.ban(reason=reason)
+            a = 'temp' if ban_length else ''
+            embed = discord.Embed(title='SIKE', color=member.color)
+            embed.description = f'`{member}` was {a}banned by **{ctx.author}**'
+            embed.set_author(name=f'{member} was Banned', icon_url=self.avatar(member))
+            embed.add_field(name='User', value=f'**{member}**')
+            embed.add_field(name='Mod', value=ctx.author.mention)
+            embed.add_field(name='Reason', value=reason)
+            embed.set_thumbnail(url=self.ban_gif)
+            if ban_length:
+                embed.add_field(name='Ban Length', value=humanize(ban_length))
+                embed.add_field(name='Unban Time',
+                                value=datetime.fromtimestamp(ban_time).strftime('%m/%d/%Y at %I:%M:%S %p EST'))
+                async with self.bot.db.cursor() as cur:
+                    query = 'INSERT INTO tempbanned (user_id, banned_at, banned_until, reason) VALUES (?, ?, ?, ?)'
+                    await cur.execute(query, (member.id, int(time.time()), ban_time, reason))
+                    await self.bot.db.commit()
+            await ctx.send(embed=embed)
+        else:
+            await ctx.guild.ban(discord.Object(id=member))
+            await ctx.send(f'{member} was banned.')
+
+    @commands.command()
+    @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
+    async def purge(self, ctx, amount, *, reason=None):
         await ctx.channel.purge(limit=amount + 1)
 
     @commands.command()
