@@ -1,7 +1,7 @@
 from discord.ext import commands, tasks
 import discord
 import aiosqlite3
-import aiohttp
+from cogs.help import Help
 import time
 
 
@@ -86,7 +86,7 @@ class OnReady(commands.Cog):
                 "uses" TEXT,
                 "creator_id" INTEGER,
                 "created_at" INTEGER
-            )'''
+            )''',
         ]
         async with db.cursor() as cur:
             for query in queries:

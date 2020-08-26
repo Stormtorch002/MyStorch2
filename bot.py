@@ -12,7 +12,8 @@ for cog in (
     'one_word_sentence',
     'gd',
     'suggestions',
-    'tags'
+    'tags',
+    'tts'
 ):
     bot.load_extension('cogs.' + cog)
 bot.load_extension('jishaku')

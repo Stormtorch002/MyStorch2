@@ -266,7 +266,8 @@ class Moderation(commands.Cog):
 
         mute_time = int(time.mktime(parsed))
         mute_length = mute_time - int(time.time())
-        reason = ' '.join([word for word in time_reason.split() if not (word[0].isdigit() and not word[1].isdigit())])
+        reason = ' '.join([word for word in time_reason.split()
+                           if len(word) == 1 or (not word[0].isdigit() and not word[1].isdigit())])
 
         if reason.isspace():
             reason = 'None'
@@ -281,6 +282,7 @@ class Moderation(commands.Cog):
 
         embed = discord.Embed(color=member.color)
         embed.set_author(name=f'{member} was Muted', icon_url=self.avatar(member))
+        embed.set_thumbnail(url=self.mute_gif)
         embed.add_field(name='User', value=member.mention)
         embed.add_field(name='Moderator', value=ctx.author.mention)
         embed.add_field(name='Mute Length', value=humanize(mute_length))
