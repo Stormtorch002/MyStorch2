@@ -13,7 +13,6 @@ for cog in (
     'gd',
     'suggestions',
     'tags',
-    'tts'
 ):
     bot.load_extension('cogs.' + cog)
 bot.load_extension('jishaku')

@@ -1,7 +1,6 @@
 from discord.ext import commands, tasks
 import discord
 import aiosqlite3
-from cogs.help import Help
 import time
 
 
