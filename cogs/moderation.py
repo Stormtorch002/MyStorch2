@@ -330,7 +330,7 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
-    async def purge(self, ctx, amount, *, reason=None):
+    async def purge(self, ctx, amount: int, *, reason=None):
         await ctx.channel.purge(limit=amount + 1)
 
     @commands.command()
