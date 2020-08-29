@@ -86,6 +86,14 @@ class OnReady(commands.Cog):
                 "creator_id" INTEGER,
                 "created_at" INTEGER
             )''',
+            '''CREATE TABLE IF NOT EXISTS npcs (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "alias" TEXT,
+                "name" TEXT,
+                "avatar_url" TEXT,
+                "granted" TEXT,
+                "creator_id" INTEGER
+            )'''
         ]
         async with db.cursor() as cur:
             for query in queries:
@@ -105,6 +113,9 @@ class OnReady(commands.Cog):
 
             await cur.execute('SELECT name FROM tags')
             self.bot.tag_names = [x[0] for x in await cur.fetchall()]
+
+            await cur.execute('SELECT alias FROM npcs')
+            self.bot.npc_aliases = [x[0] for x in await cur.fetchall()]
 
         activity = discord.Activity(type=discord.ActivityType.watching, name="PMP's Grave")
         await self.bot.change_presence(activity=activity)

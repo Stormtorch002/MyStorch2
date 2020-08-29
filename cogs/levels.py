@@ -162,134 +162,136 @@ class Levels(commands.Cog):
 
         def process_image():
             # open
-            template = Image.open('./cogs/images/template.png')
-            av = Image.open(BytesIO(avatar_data))
-            border = Image.open('./cogs/images/border.png')
-            # resize
-            border = border.resize(size=(235, 235))
-            image = Image.open(BytesIO(image_data))
-            size = image.size
-            multiplier = 900 / size[0]
-            image = image.resize(size=(900, int(size[1] * multiplier)))
-            image = ImageOps.fit(image, size=(900, 240))
-            # darken
-            enhancer = ImageEnhance.Brightness(image)
-            image = enhancer.enhance(0.5)
-            template.paste(image, (20, 25))
-            x = int(365 * ratio) + 355
+            with \
+                    Image.open('./cogs/images/template.png') as template, \
+                    Image.open(BytesIO(avatar_data)) as av, \
+                    Image.open('./cogs/images/border.png') as border, \
+                    Image.open(BytesIO(image_data)) as image:
 
-            if m.color == discord.Color.default():
-                c = (255, 255, 255)
-            else:
-                c = m.color.to_rgb()
+                # resize
+                border = border.resize(size=(235, 235))
+                size = image.size
+                multiplier = 900 / size[0]
+                image = image.resize(size=(900, int(size[1] * multiplier)))
+                image = ImageOps.fit(image, size=(900, 240))
+                # darken
+                enhancer = ImageEnhance.Brightness(image)
+                image = enhancer.enhance(0.5)
+                template.paste(image, (20, 25))
+                x = int(365 * ratio) + 355
 
-            avatar_size = int(template.size[1] * 2 / 3)
-            av = av.resize((avatar_size, avatar_size))
-            av = av.convert(mode='RGBA')
-
-            im_a = Image.new("L", av.size, 0)
-            draw = ImageDraw.Draw(im_a)
-            draw.ellipse([(0, 0), av.size], fill=255)
-            template.paste(av, (40, 45), im_a)
-            draw = ImageDraw.Draw(template, mode='RGBA')
-            draw.rectangle([(355, 175), (720, 200)], fill=(169, 169, 169, 255), outline=(0, 0, 0, 255))
-            draw.rectangle([(355, 175), (x, 200)], fill=color, outline=(0, 0, 0, 255))
-            font = ImageFont.truetype('./cogs/fonts/mono.ttf', 38)
-            size = font.getsize(str(current_level))[0]
-            x = 330 - size
-            draw.text(xy=(x, 170), font=font, fill=(255, 255, 255, 255), text=str(current_level))
-            draw.text(xy=(745, 170), font=font, fill=(255, 255, 255, 255), text=str(current_level + 1))
-            font = ImageFont.truetype('./cogs/fonts/ubuntu.ttf', 38)
-            bordered_text(draw=draw, font=font, xy=(300, 110), text=f'Rank: ', fill=(255, 255, 255, 255),
-                          outline=(0, 0, 0, 255), thiccness=2)
-            textlen = font.getsize("Rank: ")[0]
-            font = ImageFont.truetype('./cogs/fonts/mono.ttf', 48)
-            bordered_text(xy=(410, 107), draw=draw, text=str(rank), font=font, fill=color, thiccness=2,
-                          outline=(0, 0, 0, 255))
-            ranklen = font.getsize(str(rank))[0]
-            totallen = textlen + ranklen + 315
-
-            if len(m.display_name) > 12:
-
-                if len(m.display_name) > 17:
-                    text = m.display_name[:16]
+                if m.color == discord.Color.default():
+                    c = (255, 255, 255)
                 else:
+                    c = m.color.to_rgb()
+
+                avatar_size = int(template.size[1] * 2 / 3)
+                av = av.resize((avatar_size, avatar_size))
+                av = av.convert(mode='RGBA')
+
+                im_a = Image.new("L", av.size, 0)
+                draw = ImageDraw.Draw(im_a)
+                draw.ellipse([(0, 0), av.size], fill=255)
+                template.paste(av, (40, 45), im_a)
+                draw = ImageDraw.Draw(template, mode='RGBA')
+                draw.rectangle([(355, 175), (720, 200)], fill=(169, 169, 169, 255), outline=(0, 0, 0, 255))
+                draw.rectangle([(355, 175), (x, 200)], fill=color, outline=(0, 0, 0, 255))
+                font = ImageFont.truetype('./cogs/fonts/mono.ttf', 38)
+                size = font.getsize(str(current_level))[0]
+                x = 330 - size
+                draw.text(xy=(x, 170), font=font, fill=(255, 255, 255, 255), text=str(current_level))
+                draw.text(xy=(745, 170), font=font, fill=(255, 255, 255, 255), text=str(current_level + 1))
+                font = ImageFont.truetype('./cogs/fonts/ubuntu.ttf', 38)
+                bordered_text(draw=draw, font=font, xy=(300, 110), text=f'Rank: ', fill=(255, 255, 255, 255),
+                              outline=(0, 0, 0, 255), thiccness=2)
+                textlen = font.getsize("Rank: ")[0]
+                font = ImageFont.truetype('./cogs/fonts/mono.ttf', 48)
+                bordered_text(xy=(410, 107), draw=draw, text=str(rank), font=font, fill=color, thiccness=2,
+                              outline=(0, 0, 0, 255))
+                ranklen = font.getsize(str(rank))[0]
+                totallen = textlen + ranklen + 315
+
+                if len(m.display_name) > 12:
+
+                    if len(m.display_name) > 17:
+                        text = m.display_name[:16]
+                    else:
+                        text = m.display_name
+
+                    font = ImageFont.truetype('./cogs/fonts/ubuntu.ttf', 36)
+                    bordered_text(draw=draw, xy=(300, 50), text=text, font=font, fill=(c[0], c[1], c[2], 255),
+                                  outline=(0, 0, 0, 255), thiccness=1)
+                else:
+                    font = ImageFont.truetype('./cogs/fonts/ubuntu.ttf', 45)
                     text = m.display_name
+                    bordered_text(draw=draw, xy=(300, 55), text=text, font=font, fill=(c[0], c[1], c[2], 255),
+                                  outline=(0, 0, 0, 255), thiccness=1)
 
-                font = ImageFont.truetype('./cogs/fonts/ubuntu.ttf', 36)
-                bordered_text(draw=draw, xy=(300, 50), text=text, font=font, fill=(c[0], c[1], c[2], 255),
-                              outline=(0, 0, 0, 255), thiccness=1)
-            else:
-                font = ImageFont.truetype('./cogs/fonts/ubuntu.ttf', 45)
-                text = m.display_name
-                bordered_text(draw=draw, xy=(300, 55), text=text, font=font, fill=(c[0], c[1], c[2], 255),
-                              outline=(0, 0, 0, 255), thiccness=1)
+                x = font.getsize(text)[0] + 315
 
-            x = font.getsize(text)[0] + 315
+                if x < totallen:
+                    x = totallen + 5
 
-            if x < totallen:
-                x = totallen + 5
+                draw.rectangle(xy=[(x, 55), (x + 5, 150)], fill=(255, 255, 255, 255), outline=(0, 0, 0, 255))
+                font = ImageFont.truetype('./cogs/fonts/ubuntu.ttf', 32)
+                bordered_text(xy=(x + 30, 65), draw=draw, font=font, text='LEVEL', fill=(255, 255, 255, 255),
+                              thiccness=2, outline=(0, 0, 0, 255))
+                bordered_text(xy=(x + 30, 115), draw=draw, font=font, text='TOTAL XP:', fill=(255, 255, 255, 255),
+                              thiccness=2,
+                              outline=(0, 0, 0, 255))
+                font = ImageFont.truetype('./cogs/fonts/mono.ttf', 62)
+                bordered_text(xy=(x + 130, 47), font=font, draw=draw, text=str(current_level), thiccness=2,
+                              outline=(0, 0, 0, 255), fill=color)
+                font = ImageFont.truetype('./cogs/fonts/mono.ttf', 42)
 
-            draw.rectangle(xy=[(x, 55), (x + 5, 150)], fill=(255, 255, 255, 255), outline=(0, 0, 0, 255))
-            font = ImageFont.truetype('./cogs/fonts/ubuntu.ttf', 32)
-            bordered_text(xy=(x + 30, 65), draw=draw, font=font, text='LEVEL', fill=(255, 255, 255, 255), thiccness=2,
-                          outline=(0, 0, 0, 255))
-            bordered_text(xy=(x + 30, 115), draw=draw, font=font, text='TOTAL XP:', fill=(255, 255, 255, 255),
-                          thiccness=2,
-                          outline=(0, 0, 0, 255))
-            font = ImageFont.truetype('./cogs/fonts/mono.ttf', 62)
-            bordered_text(xy=(x + 130, 47), font=font, draw=draw, text=str(current_level), thiccness=2,
-                          outline=(0, 0, 0, 255), fill=color)
-            font = ImageFont.truetype('./cogs/fonts/mono.ttf', 42)
-
-            if mx > 999:
-                member_xp = f'{round(mx / 1000, 1)}K'
-            else:
-                member_xp = str(mx)
-
-            bordered_text(xy=(x + 190, 112), font=font, draw=draw, text=member_xp, thiccness=2,
-                          outline=(0, 0, 0, 255), fill=color)
-
-            if nlr:
-                role_color = nlr.color.to_rgb()
-                color_tuple = (role_color[0], role_color[1], role_color[2], 255)
-                role_name = nlr.name.split(' | ')[0]
-                levels_to = nl - current_level
-
-                if levels_to == 1:
-                    s = ''
+                if mx > 999:
+                    member_xp = f'{round(mx / 1000, 1)}K'
                 else:
-                    s = 's'
+                    member_xp = str(mx)
 
-                font = ImageFont.truetype('./cogs/fonts/mono.ttf', 35)
-                text = f'{progress}/{total_xp}'
-                bordered_text(draw=draw, font=font, thiccness=1, text=text, fill=color,
-                              outline=(0, 0, 0, 255), xy=(260, 220))
-                size = font.getsize(text)[0]
-                text = f' XP | {levels_to} Level{s} to '
-                font = ImageFont.truetype("./cogs/fonts/ubuntu.ttf", 30)
-                bordered_text(draw=draw, font=font, thiccness=1, text=text, fill=(255, 255, 255, 255),
-                              outline=(0, 0, 0, 255), xy=(260 + size, 220))
-                text_length = font.getsize(text)[0]
-                bordered_text(draw=draw, font=font, thiccness=1, text=role_name, fill=color_tuple,
-                              outline=(0, 0, 0, 255), xy=(260 + size + text_length, 220))
-            else:
-                font = ImageFont.truetype('./cogs/fonts/mono.ttf', 35)
-                text = f'{progress}/{total_xp}'
-                bordered_text(draw=draw, font=font, thiccness=1, text=text, fill=color,
-                              outline=(0, 0, 0, 255), xy=(300, 220))
-                size = font.getsize(text)[0]
-                text = ' XP to Next Level'
-                font = ImageFont.truetype("./cogs/fonts/ubuntu.ttf", 30)
-                bordered_text(draw=draw, font=font, thiccness=1, text=text, fill=(255, 255, 255, 255),
-                              outline=(0, 0, 0, 255), xy=(300 + size, 220))
+                bordered_text(xy=(x + 190, 112), font=font, draw=draw, text=member_xp, thiccness=2,
+                              outline=(0, 0, 0, 255), fill=color)
 
-            template.paste(border, (15, 18), border)
+                if nlr:
+                    role_color = nlr.color.to_rgb()
+                    color_tuple = (role_color[0], role_color[1], role_color[2], 255)
+                    role_name = nlr.name.split(' | ')[0]
+                    levels_to = nl - current_level
 
-            buffer = BytesIO()
-            template.save(buffer, 'png')
-            buffer.seek(0)
-            return buffer
+                    if levels_to == 1:
+                        s = ''
+                    else:
+                        s = 's'
+
+                    font = ImageFont.truetype('./cogs/fonts/mono.ttf', 35)
+                    text = f'{progress}/{total_xp}'
+                    bordered_text(draw=draw, font=font, thiccness=1, text=text, fill=color,
+                                  outline=(0, 0, 0, 255), xy=(260, 220))
+                    size = font.getsize(text)[0]
+                    text = f' XP | {levels_to} Level{s} to '
+                    font = ImageFont.truetype("./cogs/fonts/ubuntu.ttf", 30)
+                    bordered_text(draw=draw, font=font, thiccness=1, text=text, fill=(255, 255, 255, 255),
+                                  outline=(0, 0, 0, 255), xy=(260 + size, 220))
+                    text_length = font.getsize(text)[0]
+                    bordered_text(draw=draw, font=font, thiccness=1, text=role_name, fill=color_tuple,
+                                  outline=(0, 0, 0, 255), xy=(260 + size + text_length, 220))
+                else:
+                    font = ImageFont.truetype('./cogs/fonts/mono.ttf', 35)
+                    text = f'{progress}/{total_xp}'
+                    bordered_text(draw=draw, font=font, thiccness=1, text=text, fill=color,
+                                  outline=(0, 0, 0, 255), xy=(300, 220))
+                    size = font.getsize(text)[0]
+                    text = ' XP to Next Level'
+                    font = ImageFont.truetype("./cogs/fonts/ubuntu.ttf", 30)
+                    bordered_text(draw=draw, font=font, thiccness=1, text=text, fill=(255, 255, 255, 255),
+                                  outline=(0, 0, 0, 255), xy=(300 + size, 220))
+
+                template.paste(border, (15, 18), border)
+
+                buffer = BytesIO()
+                template.save(buffer, 'png')
+                buffer.seek(0)
+                return buffer
 
         bf = await self.bot.loop.run_in_executor(None, process_image)
 
