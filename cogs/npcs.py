@@ -32,8 +32,9 @@ class NPCs(commands.Cog):
         data = {
             "content": message,
             "username": row[0],
-            "avatar_url": row[1] if row[1] else None
         }
+        if row[1]:
+            data['avatar_url'] = row[1]
 
         async with aiohttp.ClientSession() as session:
             await ctx.message.delete()
