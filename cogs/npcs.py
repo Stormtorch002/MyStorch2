@@ -37,8 +37,8 @@ class NPCs(commands.Cog):
             data['avatar_url'] = row[1]
 
         async with aiohttp.ClientSession() as session:
-            await ctx.message.delete()
             await session.post(self.webhook_urls[ctx.channel.id], data=data)
+            await ctx.message.delete()
 
     @npc.command()
     async def add(self, ctx, alias, name, avatar_url=''):
