@@ -12,6 +12,12 @@ class ReactionRoles(commands.Cog):
                 '\U0001f389': 728666898597937163,
                 '\U0001f4b0': 728666869086683197,
                 '\U0001f3df': 728666439623376908
+            },
+            725166005596454913: {
+                '\U0001f3d3': 727196155821162526,
+                '\U0001f3b2': 727196148766474330,
+                '\U0001f916': 727201028147249214,
+                '\U0001f5e3': 727196147042615412
             }
         }
 
@@ -26,7 +32,7 @@ class ReactionRoles(commands.Cog):
                 member = guild.get_member(payload.user_id)
                 await member.add_roles(role)
                 try:
-                    await member.send(f'I have given you the `{role.name}` role!')
+                    await member.send(f'I have given you the `{role.name.split(" | ")[0]}` role!')
                 except discord.Forbidden:
                     pass
 
@@ -41,7 +47,7 @@ class ReactionRoles(commands.Cog):
                 member = guild.get_member(payload.user_id)
                 await member.remove_roles(role)
                 try:
-                    await member.send(f'I have removed you from the `{role.name}` role!')
+                    await member.send(f'I have removed you from the `{role.name.split(" | ")[0]}` role!')
                 except discord.Forbidden:
                     pass
 
