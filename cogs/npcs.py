@@ -75,6 +75,25 @@ class NPCs(commands.Cog):
 
             await ctx.send(f'Granted the NPC to `{member}`.')
 
+    @npc.command()
+    async def all(self, ctx):
+        async with self.bot.db.cursor() as cur:
+            query = 'SELECT name, alias, avatar_url, granted, creator_id FROM npcs'
+            await cur.execute(query)
+            rows = await cur.fetchall()
+
+            if not rows:
+                return await ctx.send('No NPCs breh')
+
+            response = '\n\n'.join(
+                [f'Name: {row[0]}\n'
+                 f'Alias: {row[1]}\n'
+                 f'Created by: {str(ctx.guild.get_member(row[4]))}\n'
+                 f'Granted to: {", ".join([str(ctx.guild.get_member(int(member_id))) for member_id in row[3].split()])}'
+                 f'\n<{row[2]}>' for row in rows]
+            )
+            await ctx.send(response)
+
 
 def setup(bot):
     bot.add_cog(NPCs(bot))

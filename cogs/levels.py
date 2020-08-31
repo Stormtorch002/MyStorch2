@@ -73,8 +73,7 @@ class Levels(commands.Cog):
             70: 725117488693641276
         }
         self.xp_cooldowns = {}
-        self.zerotwo = 'https://media.discordapp.net/attachments/645336386680913920/747530351294939217/' \
-                       'ddpixwl-4fc7214d-9e91-4b3b-92ec-d2e84140ad37.png'
+        self.zerotwo = 'https://media.discordapp.net/attachments/597045636063559690/750124811358961776/do-sharp.png'
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -93,24 +92,23 @@ class Levels(commands.Cog):
                     self.bot.leveling[message.author.id] += increment
                     new_level = get_level(self.bot.leveling[message.author.id])
 
-                    '''commented out until the revamp'''
-                    # authorroles = [role.id for role in message.author.roles]
-                    # levelroles = [self.leveled_roles[lvl] for lvl in self.leveled_roles.keys() if lvl <= new_level]
-                    # for role in levelroles:
-                    #     if role not in authorroles:
-                    #         role = message.guild.get_role(role)
-                    #         await message.author.add_roles(role)
+                    authorroles = [role.id for role in message.author.roles]
+                    role = [self.leveled_roles[lvl] for lvl in self.leveled_roles.keys() if lvl <= new_level]
+                    if role:
+                        role = role[-1]
+                        if role not in authorroles:
+                            role = message.guild.get_role(role)
+                            await message.author.add_roles(role)
 
                     async with self.bot.db.cursor() as cur:
                         query = 'UPDATE leveling SET xp = xp + ? WHERE user_id = ?'
                         await cur.execute(query, (increment, message.author.id,))
                         await self.bot.db.commit()
 
-                'commented out until the revamp'
-                #     if old_level != new_level:
-                #         await message.channel.send(
-                #             f'Congrats, {message.author.mention}! You made it to level **{new_level}**.')
-                # self.xp_cooldowns[message.author.id] = time.time() + 15
+                    if old_level != new_level:
+                        await message.channel.send(
+                            f'Congrats, {message.author.mention}! You made it to level **{new_level}**.')
+                        self.xp_cooldowns[message.author.id] = time.time() + 15
 
     @commands.group(name='rank', invoke_without_command=True)
     async def _rank(self, ctx, *, mem: discord.Member = None):
