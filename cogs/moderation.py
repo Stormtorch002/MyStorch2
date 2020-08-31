@@ -179,9 +179,9 @@ class Moderation(commands.Cog):
         embed.set_author(name=f'Warning Issued', icon_url=self.avatar(member))
         await ctx.send(embed=embed)
 
-    @warn.group(invoke_without_command=True, aliases=['del', 'remove', 'delete'])
+    @commands.group(invoke_without_command=True, aliases=['del', 'remove', 'delete'])
     @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
-    async def clear(self, ctx, warning_ids: commands.Greedy[int]):
+    async def clearwarn(self, ctx, warning_ids: commands.Greedy[int]):
 
         async with self.bot.db.cursor() as cur:
             for warning_id in warning_ids:
@@ -191,7 +191,7 @@ class Moderation(commands.Cog):
 
         await ctx.send(f'Cleared warnings.')
 
-    @clear.command()
+    @clearwarn.command()
     @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
     async def latest(self, ctx):
         async with self.bot.db.cursor() as cur:
@@ -207,11 +207,6 @@ class Moderation(commands.Cog):
             query = 'DELETE TOP(1) FROM warnings ORDER BY "id" DESC'
             await cur.execute(query)
             await self.bot.db.commit()
-
-    @commands.command()
-    @commands.has_any_role(725117459803275306, 725117475368206377, 725117475997483126)
-    async def clearwarn(self, ctx):
-        await ctx.send(f'the command is `warn clear`')
 
     @commands.group(invoke_without_command=True)
     @commands.has_any_role(725117477578866798, 725117459803275306, 725117475368206377, 725117475997483126)
