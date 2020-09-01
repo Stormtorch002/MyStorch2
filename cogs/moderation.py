@@ -200,12 +200,12 @@ class Moderation(commands.Cog):
             user_id = await cur.fetchone()
 
             if user_id:
-                await ctx.send(f'Cleared warning from `{ctx.guild.get_member(user_id)}`')
+                await ctx.send(f'Cleared warning from `{ctx.guild.get_member(user_id[0])}`')
             else:
                 return await ctx.send('No warnings found.')
 
-            query = 'DELETE TOP(1) FROM warnings ORDER BY "id" DESC'
-            await cur.execute(query)
+            query = 'DELETE FROM warnings WHERE user_id = ?'
+            await cur.execute(query, (user_id[0],))
             await self.bot.db.commit()
 
     @commands.group(invoke_without_command=True)
