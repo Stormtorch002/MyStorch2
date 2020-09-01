@@ -31,7 +31,10 @@ class OnReady(commands.Cog):
                 role = guild.get_role(self.bot.muted_role_id)
                 for muted_id in muted_ids:
                     member = guild.get_member(muted_id[0])
-                    await member.remove_roles(role)
+                    try:
+                        await member.remove_roles(role)
+                    except discord.Forbidden:
+                        pass
             if banned_ids:
                 guild = self.bot.get_guild(self.bot.guild_id)
                 for banned_id in banned_ids:

@@ -93,12 +93,20 @@ class Levels(commands.Cog):
                     new_level = get_level(self.bot.leveling[message.author.id])
 
                     authorroles = [role.id for role in message.author.roles]
-                    role = [self.leveled_roles[lvl] for lvl in self.leveled_roles.keys() if lvl <= new_level]
-                    if role:
-                        role = role[-1]
+                    roles = {lvl: self.leveled_roles[lvl] for lvl in self.leveled_roles if lvl <= new_level}
+                    if roles:
+                        keys = list(roles.keys())
+                        lvl = max(keys)
+                        role = roles[lvl]
+                        keys.remove(lvl)
                         if role not in authorroles:
                             role = message.guild.get_role(role)
                             await message.author.add_roles(role)
+                        for lvl in keys:
+                            role = roles[lvl]
+                            if role in authorroles:
+                                role = message.guild.get_role(role)
+                                await message.author.remove_roles(role)
 
                     async with self.bot.db.cursor() as cur:
                         query = 'UPDATE leveling SET xp = xp + ? WHERE user_id = ?'
@@ -130,7 +138,7 @@ class Levels(commands.Cog):
             row = await cur.fetchone()
             color, url = row[0], row[1]
 
-        if url == 'https://media.discordapp.net/attachments/597045636063559690/750124811358961776/do-sharp.png':
+        if url == self.zerotwo:
             tip = 'TIP: You can do `ms rank image <image url>` to change your rank card image!'
         else:
             tip = ''
