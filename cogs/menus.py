@@ -61,3 +61,47 @@ class WarningsMenu(menus.Menu):
             embed = create_embed(self.bot, self.rows, len(self.rows))
             self.page = len(self.rows)
             await self.message.edit(embed=embed)
+
+
+class LevelsMenu(menus.Menu):
+
+    def __init__(self, *, timeout=180.0, delete_message_after=False,
+                 clear_reactions_after=False, check_embeds=False, message=None):
+        super().__init__(timeout=180.0, delete_message_after=False, clear_reactions_after=False, check_embeds=False,
+                         message=None)
+        self.page = 1
+        self.rows = []
+
+    async def send_initial_message(self, ctx, channel):
+        rows = ctx.rows
+        self.rows = rows
+        embed = create_embed(self.bot, self.rows, 1)
+        return await ctx.send(embed=embed)
+
+    @menus.button('\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}')
+    async def on_first(self, payload):
+        if self.page != 1:
+            embed = create_embed(self.bot, self.rows, 1)
+            self.page = 1
+            await self.message.edit(embed=embed)
+
+    @menus.button('\N{BLACK LEFT-POINTING TRIANGLE}')
+    async def on_left(self, payload):
+        if self.page != 1:
+            embed = create_embed(self.bot, self.rows, self.page - 1)
+            self.page -= 1
+            await self.message.edit(embed=embed)
+
+    @menus.button('\N{BLACK RIGHT-POINTING TRIANGLE}')
+    async def on_right(self, payload):
+        if self.page != len(self.rows):
+            embed = create_embed(self.bot, self.rows, self.page + 1)
+            self.page += 1
+            await self.message.edit(embed=embed)
+
+    @menus.button('\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}')
+    async def on_last(self, payload):
+        if self.page != len(self.rows):
+            embed = create_embed(self.bot, self.rows, len(self.rows))
+            self.page = len(self.rows)
+            await self.message.edit(embed=embed)

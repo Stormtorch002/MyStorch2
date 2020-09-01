@@ -20,13 +20,14 @@ def bordered_text(draw: ImageDraw.ImageDraw, xy: tuple, text, font: ImageFont, f
 
 
 def get_xp(lvl: int):
+    lvl -= 1
     xp = 21 * lvl * (lvl - 1)
     return xp
 
 
 def get_level(xp: int):
     lvl = int((1 + math.sqrt(1 + 8 * xp / 42)) / 2)
-    return lvl
+    return lvl - 1
 
 
 class Levels(commands.Cog):
@@ -47,6 +48,7 @@ class Levels(commands.Cog):
             743881454068695041
         )
         self.leveled_roles = {
+            0: 744608325001281566,
             1: 726131163743256596,
             2: 726131155664896046,
             4: 726131162862583828,
