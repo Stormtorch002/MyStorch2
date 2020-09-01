@@ -338,6 +338,45 @@ class Levels(commands.Cog):
 
         await ctx.send('Changed your rank image.')
 
+    @commands.command()
+    async def levels(self, ctx, page: int = 1):
+        if page < 1:
+            return await ctx.send('The page must be 1 or greater.')
+
+        async with self.bot.db.cursor() as cur:
+            sql = 'SELECT user_id, xp FROM leveling ORDER BY xp DESC'
+            await cur.execute(sql)
+            original_rows = await cur.fetchall()
+
+        rows = [original_rows[i:i + 10] for i in range(0, len(original_rows), 10)]
+        pages = len(rows)
+
+        try:
+            rows = rows[page - 1]
+        except IndexError:
+            return await ctx.send(f'Only `{pages}` pages exist in the leaderboard now.')
+
+        embed = discord.Embed(title=f'Leaderboard for {ctx.guild.name}', color=ctx.author.color)
+        embed.set_author(name=f'Page {page}', icon_url=str(ctx.guild.icon_url_as(format='png')))
+        embed.set_footer(text=f'Page {page}/{pages}')
+
+        for row in rows:
+            member, xp = ctx.guild.get_member(row[0]), row[1]
+            rank = original_rows.index(row) + 1
+            lvl, name = get_level(xp), f'#{rank}'
+
+            if member is not None:
+                value = f'{member.mention}\n**Level:** `{lvl}`\n**Total XP:** `{xp}`'
+                embed.add_field(name=name, value=value)
+            else:
+                member_id = row['member_id']
+                name = f'{rank} (Member Left Server)'
+                member = f'<@{member_id}>'
+                value = f'{member}\n**Level:** `{lvl}`\n**Total XP:** `{xp}`'
+                embed.add_field(name=name, value=value)
+
+        await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Levels(bot))
