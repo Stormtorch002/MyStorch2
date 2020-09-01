@@ -20,7 +20,7 @@ def bordered_text(draw: ImageDraw.ImageDraw, xy: tuple, text, font: ImageFont, f
 
 
 def get_xp(lvl: int):
-    lvl -= 1
+    lvl += 1
     xp = 21 * lvl * (lvl - 1)
     return xp
 
