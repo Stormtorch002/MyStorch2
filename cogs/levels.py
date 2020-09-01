@@ -300,7 +300,7 @@ class Levels(commands.Cog):
         await message.edit(content='sending file...')
         await ctx.send(file=discord.File(fp=bf, filename='rank.png'))
         total = time.time() - start
-        await message.edit(content=f'Total: `{round(total, 3)}s\n{tip}`')
+        await message.edit(content=f'Total: `{round(total, 3)}s`\n{tip}')
 
     @_rank.command()
     async def color(self, ctx, *, new_color):
