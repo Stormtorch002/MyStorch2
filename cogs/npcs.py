@@ -8,8 +8,8 @@ class NPCs(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.webhook_urls = {
-            645336386680913920: 'https://discord.com/api/webhooks/749276137649078382/'
-                                'DrCTukhN8uXk2mhSEnUNIDbh3O9rgsCrNl_GOH80ULQdS0v5sr4Ki-s0Yi63ZE9mbqWi'
+            725093929481142292: 'https://discord.com/api/webhooks/750402737530732615/'
+                                '8xVZpFwx3rxQ6eYkt7iBL4NZrKjb2gWzQbp09KsXBKQlOVMIwEg7yhAs7pcVBkomiy0m'
         }
         self.allowed_channels = self.webhook_urls.keys()
 
