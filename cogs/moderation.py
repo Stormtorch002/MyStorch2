@@ -120,7 +120,6 @@ class Moderation(commands.Cog):
                         await self.bot.db.commit()
                     elif count == 6:
                         embed.set_thumbnail(url=self.ban_gif)
-                        embed.set_thumbnail(url='')
                         embed.set_author(name=f'Warning and Ban Issued', icon_url=self.avatar(message.author))
                         embed.description = f'**{message.author}** has been warned for saying ||{row[0]}||. ' \
                                             f'They now have `{count}` warnings **and will be permanently banned.**'
@@ -131,7 +130,28 @@ class Moderation(commands.Cog):
                                             f'They now have `{count}` warnings.'
                     await message.channel.send(embed=embed)
                 else:
-                    await message.author.ban(reason='n word')
+                    reason = f'saying the N word'
+                    mute_length = 43200
+                    mute_time = int(time.time() + mute_length)
+
+                    role = message.guild.get_role(self.bot.muted_role_id)
+                    await message.author.add_roles(role, reason=reason)
+
+                    query = 'INSERT INTO muted (user_id, muted_at, muted_until, reason) VALUES (?, ?, ?, ?)'
+                    await cur.execute(query, (message.author.id, int(time.time()), mute_time, reason))
+                    await self.bot.db.commit()
+
+                    embed = discord.Embed(
+                        color=message.author.color,
+                        description=f'**{message.author}** has been **muted for 12 hours** for saying the N word.'
+                    )
+                    embed.set_author(name=f'{message.author} was Muted', icon_url=self.avatar(message.author))
+                    embed.set_thumbnail(url=self.mute_gif)
+                    embed.add_field(name='Mute Length', value=humanize(mute_length))
+                    embed.add_field(name='Unmute Time',
+                                    value=datetime.fromtimestamp(mute_time).strftime('%m/%d/%Y at %I:%M:%S %p EST'))
+                    embed.add_field(name='Reason', value=reason)
+                    await message.channel.send(embed=embed)
 
     @commands.group()
     @commands.has_any_role(725117477578866798, 725117459803275306, 725117475368206377, 725117475997483126)
