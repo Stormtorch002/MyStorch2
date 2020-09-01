@@ -1,5 +1,6 @@
 from discord.ext import commands
 import time
+import discord
 
 
 class Suggestions(commands.Cog):
@@ -12,9 +13,8 @@ class Suggestions(commands.Cog):
         fmt = 'png' if not user.is_avatar_animated() else 'gif'
         return str(user.avatar_url_as(format=fmt))
 
-    @commands.command(hidden=True)  # revamp isn't done yet lol
+    @commands.command()
     async def suggest(self, ctx, *, suggestion):
-        return await ctx.send('hey yo the revamp isnt done yet')  # will remove this after revamp
 
         async with self.bot.db.cursor() as cur:
             query = 'SELECT reset_time FROM suggestion_cooldowns WHERE user_id = ?'
@@ -34,7 +34,7 @@ class Suggestions(commands.Cog):
         if not x:
             return await ctx.send(f'You can only post a suggestion once every **12 hours.**')
 
-        channel = bot.get_channel(726577000881586288)
+        channel = self.bot.get_channel(726577000881586288)
         embed = discord.Embed(color=ctx.author.color, descirption=suggestion)
         embed.set_author(name=f'Suggestion from {ctx.author}', icon_url=self.avatar(ctx.author))
         message = await channel.send(embed=embed)

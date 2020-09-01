@@ -130,9 +130,13 @@ class Levels(commands.Cog):
             row = await cur.fetchone()
             color, url = row[0], row[1]
 
+        if url == 'https://media.discordapp.net/attachments/597045636063559690/750124811358961776/do-sharp.png':
+            tip = 'TIP: You can do `ms rank image <image url>` to change your rank card image!'
+        else:
+            tip = ''
+
         mx = xp
         current_level = get_level(mx)
-
         nlr = nl = None
 
         for l in self.leveled_roles.keys():
@@ -296,7 +300,7 @@ class Levels(commands.Cog):
         await message.edit(content='sending file...')
         await ctx.send(file=discord.File(fp=bf, filename='rank.png'))
         total = time.time() - start
-        await message.edit(content=f'Total: `{round(total, 3)}s`')
+        await message.edit(content=f'Total: `{round(total, 3)}s\n{tip}`')
 
     @_rank.command()
     async def color(self, ctx, *, new_color):

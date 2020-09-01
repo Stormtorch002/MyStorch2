@@ -35,7 +35,7 @@ class OnReady(commands.Cog):
             if banned_ids:
                 guild = self.bot.get_guild(self.bot.guild_id)
                 for banned_id in banned_ids:
-                    user = await self.bot.fetch_user(banned_id[0])
+                    user = discord.Object(id=banned_id[0])
                     await guild.unban(user)
 
         except Exception as e:
