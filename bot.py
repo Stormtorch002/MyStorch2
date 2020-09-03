@@ -16,7 +16,8 @@ for cog in (
     'npcs',
     'reaction_roles',
     'levels',
-    'logs'
+    'logs',
+    'counts'
 ):
     bot.load_extension('cogs.' + cog)
 bot.load_extension('jishaku')
