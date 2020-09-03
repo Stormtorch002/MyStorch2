@@ -17,7 +17,7 @@ class Logs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        roles = [self.bot.get_role(role_id) for role_id in self.join_role_ids]
+        roles = [member.guild.get_role(role_id) for role_id in self.join_role_ids]
         await member.add_roles(*roles)
 
 

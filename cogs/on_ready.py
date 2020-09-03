@@ -96,11 +96,19 @@ class OnReady(commands.Cog):
                 "avatar_url" TEXT,
                 "granted" TEXT,
                 "creator_id" INTEGER
+            )''',
+            '''CREATE TABLE IF NOT EXISTS counts (
+                "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+                "user_id" INTEGER,
+                "nickname" TEXT,
+                "count" INTEGER,
+                "word" TEXT
             )'''
         ]
         async with db.cursor() as cur:
             for query in queries:
                 await cur.execute(query)
+            await db.commit()
 
             self.bot.db = db
             self.loop.start()

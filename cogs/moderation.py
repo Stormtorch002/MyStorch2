@@ -67,9 +67,7 @@ class Moderation(commands.Cog):
         fmt = 'png' if not user.is_avatar_animated() else 'gif'
         return str(user.avatar_url_as(format=fmt))
 
-    @commands.Cog.listener()
-    async def on_message(self, message):
-
+    async def check_swears(self, message):
         if message.author.bot:
             return
 
@@ -152,6 +150,15 @@ class Moderation(commands.Cog):
                                     value=datetime.fromtimestamp(mute_time).strftime('%m/%d/%Y at %I:%M:%S %p EST'))
                     embed.add_field(name='Reason', value=reason)
                     await message.channel.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        await self.check_swears(message)
+
+    @commands.Cog.listener()
+    async def on_message_edit(self, before, after):
+        if before.content != after.content:
+            await self.check_swears(after)
 
     @commands.group()
     @commands.has_any_role(725117477578866798, 725117459803275306, 725117475368206377, 725117475997483126)

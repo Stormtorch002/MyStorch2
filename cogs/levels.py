@@ -115,6 +115,11 @@ class Levels(commands.Cog):
                         await cur.execute(query, (increment, message.author.id,))
                         await self.bot.db.commit()
 
+                    if new_level == 6:
+                        role = message.guild.get_role(750444981449130092)
+                        if role not in message.author.roles:
+                            await message.author.add_roles(role)
+
                     if old_level != new_level:
                         await message.channel.send(
                             f'Congrats, {message.author.mention}! You made it to level **{new_level}**.')
@@ -350,7 +355,7 @@ class Levels(commands.Cog):
             await cur.execute(sql)
             original_rows = await cur.fetchall()
 
-        rows = [original_rows[i:i + 10] for i in range(0, len(original_rows), 10)]
+        rows = [original_rows[i:i + 12] for i in range(0, len(original_rows), 12)]
         pages = len(rows)
 
         try:
