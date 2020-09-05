@@ -115,7 +115,7 @@ class Levels(commands.Cog):
                         await cur.execute(query, (increment, message.author.id,))
                         await self.bot.db.commit()
 
-                    self.xp_cooldowns[message.author.id] = time.time() + 15
+                    self.xp_cooldowns[message.author.id] = time.time() + 30
 
                     if new_level == 6:
                         role = message.guild.get_role(750444981449130092)
