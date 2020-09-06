@@ -18,7 +18,7 @@ class Suggestions(commands.Cog):
 
         async with self.bot.db.cursor() as cur:
             query = 'SELECT reset_time FROM suggestion_cooldowns WHERE user_id = ?'
-            await cur.execute(query, (ctx.author.id, time.time()))
+            await cur.execute(query, (ctx.author.id,))
             reset_time = await cur.fetchone()
 
             if reset_time:

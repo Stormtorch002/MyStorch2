@@ -373,7 +373,7 @@ class Levels(commands.Cog):
                 value = f'{member.mention}\n**Level:** `{lvl}`\n**Total XP:** `{xp}`'
                 embed.add_field(name=name, value=value)
             else:
-                member_id = row['member_id']
+                member_id = row[0]
                 name = f'{rank} (Member Left Server)'
                 member = f'<@{member_id}>'
                 value = f'{member}\n**Level:** `{lvl}`\n**Total XP:** `{xp}`'
