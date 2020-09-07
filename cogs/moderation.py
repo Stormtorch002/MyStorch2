@@ -5,6 +5,8 @@ import parsedatetime
 from cogs import menus
 from datetime import datetime
 from typing import Union
+from config import PASTEBIN
+import aiohttp
 
 
 def humanize(seconds: int):
@@ -154,6 +156,25 @@ class Moderation(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         await self.check_swears(message)
+        if message.attachments:
+            txt = None
+            for a in message.attachments:
+                if a.filename == 'message.txt':
+                    txt = a
+                    break
+            if txt:
+                content = (await txt.read()).decode('utf-8')
+                data = {
+                    'api_dev_key': PASTEBIN,
+                    'api_paste_name': 'message.txt',
+                    'api_paste_code': content,
+                    'api_option': 'paste'
+                }
+                async with aiohttp.ClientSession() as session:
+                    async with session.post('https://pastebin.com/api/api_post.php', data=data) as url:
+                        url = await url.text()
+                        await message.channel.send(f'{message.author.mention}, I have created a pastebin of your '
+                                                   f'message: {url}')
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
