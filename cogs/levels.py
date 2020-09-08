@@ -117,7 +117,7 @@ class Levels(commands.Cog):
 
                     self.xp_cooldowns[message.author.id] = time.time() + 30
 
-                    if new_level == 6:
+                    if new_level >= 6:
                         role = message.guild.get_role(750444981449130092)
                         if role not in message.author.roles:
                             await message.author.add_roles(role)
