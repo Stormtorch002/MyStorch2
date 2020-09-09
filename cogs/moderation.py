@@ -97,28 +97,42 @@ class Moderation(commands.Cog):
                         embed.set_author(name=f'Warning and Mute Issued', icon_url=self.avatar(message.author))
                         muted_role = self.bot.get_guild(self.bot.guild_id).get_role(self.bot.muted_role_id)
                         embed.description = f'**{message.author}** has been warned for saying ||{row[0]}||. ' \
-                                            f'They now have `{count}` warnings **and will be muted for 12 hours.**'
+                                            f'They now have `{count}` warnings **and will be muted for 6 hours.**'
                         await message.author.add_roles(muted_role)
 
                         query = 'INSERT INTO muted (user_id, muted_at, muted_until, reason) VALUES (?, ?, ?, ?)'
-                        await cur.execute(query, (message.author.id, int(time.time()), int(time.time()) + 43200,
+                        await cur.execute(query, (message.author.id, int(time.time()), int(time.time()) + 43200 / 2,
                                                   f'{count} warnings'))
                         await self.bot.db.commit()
-                        embed.add_field(name='Unmute Time', value=datetime.fromtimestamp(int(time.time()) + 43200).
+                        embed.add_field(name='Unmute Time', value=datetime.fromtimestamp(int(time.time()) + 43200 / 2).
                                         strftime('%m/%d/%Y at %I:%M:%S %p EST'))
-                    elif count == 5:
+                    elif count == 6:
+                        embed.set_thumbnail(url=self.mute_gif)
+                        embed.set_author(name=f'Warning and Mute Issued', icon_url=self.avatar(message.author))
+                        muted_role = self.bot.get_guild(self.bot.guild_id).get_role(self.bot.muted_role_id)
+                        embed.description = f'**{message.author}** has been warned for saying ||{row[0]}||. ' \
+                                            f'They now have `{count}` warnings **and will be muted for 24 hours.**'
+                        await message.author.add_roles(muted_role)
+
+                        query = 'INSERT INTO muted (user_id, muted_at, muted_until, reason) VALUES (?, ?, ?, ?)'
+                        await cur.execute(query, (message.author.id, int(time.time()), int(time.time()) + 43200 * 2,
+                                                  f'{count} warnings'))
+                        await self.bot.db.commit()
+                        embed.add_field(name='Unmute Time', value=datetime.fromtimestamp(int(time.time()) + 43200 * 2).
+                                        strftime('%m/%d/%Y at %I:%M:%S %p EST'))
+                    elif count == 8:
                         embed.set_thumbnail(url=self.ban_gif)
                         embed.set_author(name=f'Warning and Tempban Issued', icon_url=self.avatar(message.author))
                         embed.description = f'**{message.author} has been warned for saying ||{row[0]}||. ' \
-                                            f'They now have `{count}` warnings **and will be tempbanned for 2 days.**'
-                        embed.add_field(name='Unban Time', value=datetime.fromtimestamp(int(time.time()) + 172800).
+                                            f'They now have `{count}` warnings **and will be tempbanned for 1 week.**'
+                        embed.add_field(name='Unban Time', value=datetime.fromtimestamp(int(time.time()) + 604800).
                                         strftime('%m/%d/%Y at %I:%M:%S %p EST'))
-                        await message.author.ban(reason=f'{count} warnings - 48h tempban')
+                        await message.author.ban(reason=f'{count} warnings - 1 week tempban')
                         query = 'INSERT INTO tempbanned (user_id, banned_at, banned_until, reason) VALUES (?, ?, ?, ?)'
-                        await cur.execute(query, (message.author.id, int(time.time()), int(time.time()) + 172800,
+                        await cur.execute(query, (message.author.id, int(time.time()), int(time.time()) + 604800,
                                                   f'{count} warnings'))
                         await self.bot.db.commit()
-                    elif count == 6:
+                    elif count == 9:
                         embed.set_thumbnail(url=self.ban_gif)
                         embed.set_author(name=f'Warning and Ban Issued', icon_url=self.avatar(message.author))
                         embed.description = f'**{message.author}** has been warned for saying ||{row[0]}||. ' \
