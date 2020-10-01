@@ -18,15 +18,23 @@ class ReactionRoles(commands.Cog):
                 '\U0001f3b2': 727196148766474330,
                 '\U0001f916': 727201028147249214,
                 '\U0001f5e3': 727196147042615412
+            },
+            760847607253434449: {
+                '\U0001f1e6': 753029940378861639,
+                '\U0001f1e7': 753029946032783451,
+                '\U0001f1e8': 753029946036715540,
+                '\U0001f1e9': 753029946338836560,
+                '\U0001f1ea': 753029947324497962,
+                '\U0001f1eb': 753029951103696980
             }
         }
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
-        if payload.message_id in self.reaction_roles.keys():
+        if payload.message_id in self.reaction_roles:
             emoji = str(payload.emoji)
             reaction_role = self.reaction_roles[payload.message_id]
-            if emoji in reaction_role.keys():
+            if emoji in reaction_role:
                 guild = self.bot.get_guild(payload.guild_id)
                 role = guild.get_role(reaction_role[emoji])
                 member = guild.get_member(payload.user_id)
@@ -38,10 +46,10 @@ class ReactionRoles(commands.Cog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
-        if payload.message_id in self.reaction_roles.keys():
+        if payload.message_id in self.reaction_roles:
             emoji = str(payload.emoji)
             reaction_role = self.reaction_roles[payload.message_id]
-            if emoji in reaction_role.keys():
+            if emoji in reaction_role:
                 guild = self.bot.get_guild(payload.guild_id)
                 role = guild.get_role(reaction_role[emoji])
                 member = guild.get_member(payload.user_id)

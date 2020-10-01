@@ -9,6 +9,7 @@ class OnReady(commands.Cog):
     def __init__(self, bot):
         self.leveling = {}
         self.bot = bot
+        self.bot.loop.create_task(self.on_ready())
 
     @tasks.loop(seconds=4.20)
     async def loop(self):
@@ -44,8 +45,8 @@ class OnReady(commands.Cog):
         except Exception as e:
             print(e)
 
-    @commands.Cog.listener()
     async def on_ready(self):
+        await self.bot.wait_until_ready()
         db = await aiosqlite3.connect('./main.db')
         queries = [
             '''CREATE TABLE IF NOT EXISTS warnings (
